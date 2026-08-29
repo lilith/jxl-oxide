@@ -2880,3 +2880,7 @@ dependencies = [
  "cc",
  "pkg-config",
 ]
+
+[[patch.unused]]
+name = "zencodec"
+version = "0.1.27"
