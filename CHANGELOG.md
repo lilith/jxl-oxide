@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Third-party lockfile refreshed within the existing requirements**
+  (`93052e3`). `Cargo.lock` only — no manifest requirement moved, and no
+  published API changed. 120 packages advanced, 4 entered the graph
+  (`chacha20`, `cpufeatures`, `rand_pcg`, `zlib-rs`) and 21 left it. Notable:
+  `aws-lc-sys` 0.41.0 → 0.44.0 and `aws-lc-rs` 1.17.0 → 1.18.0 (the rustls
+  backend), `brotli-decompressor` 5.0.0 → 5.0.3, `cc` 1.2.62 → 1.4.4,
+  `bitflags` 2.11.1 → 2.13.1, `clap` 4.6.1 → 4.6.6, `flate2` 1.1.9 → 1.1.10,
+  `http` 1.4.1 → 1.5.0, plus the crossbeam and futures families.
+  **Checked against the toolchain CI pins (1.95.0), not just the local one** —
+  no crate here declares `rust-version`, so the resolver takes absolute latest
+  rather than applying an MSRV cap: `cargo +1.95.0 check --all --locked`,
+  `clippy --all --locked -- -D warnings` and the `--no-default-features` clippy
+  leg all exit 0. Tests: `cargo test --release -- --test-threads 1` (CI's
+  command) 225 passed, 0 failed; `cargo fmt --all --check` clean.
+
+### Known
+- On toolchains newer than the pinned 1.95.0 (checked on 1.98.0), clippy
+  reports four `clippy::chunks_exact_to_as_chunks` errors in
+  `crates/jxl-modular/src/transform/squeeze.rs` — a lint that did not exist in
+  1.95.0, so CI does not see them. Left as-is rather than diverging from
+  upstream for a lint no gate runs.
+
+### Deferred (would need a manifest bump)
+- `criterion` 0.5.1 → 0.8.2 (bench-only dev-dep, `jxl-oxide-tests`),
+  `miniz_oxide` 0.8.9 → 0.9.1, `moxcms` 0.8.1 → 0.9.0 and `rusty_ffmpeg`
+  0.16.7 → 0.17.0 are each blocked by their declared requirement. `moxcms` is
+  live colour management and `miniz_oxide` a decompression backend, so neither
+  is a routine bump; the other two are tooling.
+
 ## [0.12.6] - 2026-05-29
 
 ### Fixed
